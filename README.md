@@ -7,7 +7,7 @@
 
 ## 🎥 Demo Preview
 
-![Minishell Demo](./minishell-demo.gif)](./minishell-demo.gif)
+![Minishell Demo](./minishell-demo.gif)
 
 ---
 
