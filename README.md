@@ -77,6 +77,7 @@ _Coming soon — short terminal walkthrough GIF showing command execution and Ct
 
 ## 🧩 Example session
 
+```
 [/home/tymour]$ pwd
 /home/tymour
 [/home/tymour]$ cd /
@@ -86,6 +87,7 @@ hello world
 [/home/tymour/Desktop]$ sleep 5
 ^C
 [/home/tymour/Desktop]$ exit
+```
 
 ---
 
@@ -109,45 +111,46 @@ hello world
 cd src
 make        # builds minishell
 ./minishell # runs it
-Note
-Windows builds using cl.exe will fail — use WSL or any Unix-like environment.
+```
 
-🧭 Parsing roadmap (next steps)
-1️⃣ Improved tokenizer
-Split input correctly while honoring quotes and operators
+### Note
+Windows builds using `cl.exe` will fail — use **WSL** or any Unix-like environment.
 
-Keep "quoted text" as one token
+---
 
-Support escaped quotes \"
+## 🧭 Parsing roadmap (next steps)
 
-Recognize operators (|, <, >, >>, 2>, &) as separate tokens
+### 1️⃣ Improved tokenizer
+- Split input correctly while honoring **quotes** and **operators**  
+- Keep `"quoted text"` as one token  
+- Support escaped quotes `\"`  
+- Recognize operators (`|`, `<`, `>`, `>>`, `2>`, `&`) as separate tokens
 
-2️⃣ Basic redirection & pipe support
-Implement > and < using dup2() before execvp()
+### 2️⃣ Basic redirection & pipe support
+- Implement `>` and `<` using `dup2()` before `execvp()`  
+- Add a single pipeline (`cmd1 | cmd2`) using one pipe and two children
 
-Add a single pipeline (cmd1 | cmd2) using one pipe and two children
+### 3️⃣ Built-in polish
+- Support `cd` with no args → `$HOME`  
+- Add `cd -` for previous directory  
+- Support `exit N` to return a custom exit code
 
-3️⃣ Built-in polish
-Support cd with no args → $HOME
+> These steps evolve Minishell into a fully functional multi-process interpreter while keeping the design minimal and readable.
 
-Add cd - for previous directory
+---
 
-Support exit N to return a custom exit code
+## ✍️ Lessons learned
+- **Signal safety:** only async-safe calls like `write()` inside signal handlers  
+- **Process hygiene:** use `waitpid()` to prevent zombies  
+- **Design clarity:** separate `parse()` logic simplifies testing and future extensions  
+- **Error discipline:** consistent messages ease debugging  
+- **Learning value:** small, well-scoped shells are ideal for mastering process control and POSIX fundamentals
 
-These steps evolve Minishell into a fully functional multi-process interpreter while keeping the design minimal and readable.
+---
 
-✍️ Lessons learned
-Signal safety: only async-safe calls like write() inside signal handlers
+## 👤 Author
+**Tymour Aidabole** — Former U.S. Army Ranger • B.A. Computer Science, Columbia University  
+**LinkedIn:** [https://www.linkedin.com/in/tymour-aidabole-1284b0159/](https://www.linkedin.com/in/tymour-aidabole-1284b0159/)  
+**GitHub:** [https://github.com/tymourknots](https://github.com/tymourknots)
 
-Process hygiene: use waitpid() to prevent zombies
-
-Design clarity: separate parse() logic simplifies testing and future extensions
-
-Error discipline: consistent messages ease debugging
-
-Learning value: small, well-scoped shells are ideal for mastering process control and POSIX fundamentals
-
-👤 Author
-Tymour Aidabole — Former U.S. Army Ranger • B.A. Computer Science, Columbia University
-LinkedIn: https://www.linkedin.com/in/tymour-aidabole-1284b0159/
-GitHub: https://github.com/tymourknots
+---
