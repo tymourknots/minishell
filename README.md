@@ -13,31 +13,30 @@ Executes external commands using fork() + execvp()
 
 Waits for foreground processes via waitpid()
 
-Handles Ctrl-C with a custom SIGINT handler (returns to prompt instead of exiting)
+Handles Ctrl-C with a custom SIGINT handler (returns safely to prompt)
 
 Built-ins
 
 cd [path] — changes the current directory
 
-Supports relative paths and ~ for home.
+Supports relative paths and ~ for home directory
 
 Example: cd ~/Documents
 
-exit — terminates the shell loop and exits cleanly.
+exit — terminates the shell loop and exits cleanly
 
 Error handling
 
-Descriptive stderr output for every system call failure (chdir, malloc, fork, waitpid, execvp, getcwd).
+Descriptive error messages for every failed system call (chdir, malloc, fork, waitpid, execvp, getcwd)
 
-Detects malformed quotes in cd arguments.
+Detects malformed quotes in cd arguments ("unclosed" → prints error)
 
 🧱 Tech stack
-
 Language & System
 
 C17 (GCC / Clang)
 
-POSIX APIs (unistd.h, sys/wait.h, pwd.h, signal.h)
+POSIX APIs: <unistd.h>, <sys/wait.h>, <pwd.h>, <signal.h>
 
 System calls & libraries
 
@@ -51,7 +50,7 @@ Memory: dynamic malloc / free
 
 Error reporting: errno + strerror()
 
-🗂️ Code overview
+🗂️ Code structure
 Component	Purpose
 signal_handler()	Catches Ctrl-C, prints newline, sets interrupt flag
 change_directory()	Executes chdir() and prints errors if it fails
@@ -64,7 +63,7 @@ Prompt format
 [<blue working directory>]$ 
 
 
-Uses ANSI escape codes for color (\x1b[34;1m and reset \x1b[0m).
+Uses ANSI escape codes for color (\x1b[34;1m for bright blue, \x1b[0m to reset).
 
 🧩 Example session
 [/home/tymour]$ pwd
@@ -83,16 +82,16 @@ No pipelines (|), redirection (>, <), or background execution (&)
 
 No environment variable expansion ($VAR)
 
-Quoting support exists only in cd parsing; all other commands use raw strtok()
+Quoting support exists only in cd parsing; other commands use raw strtok()
 
-No command history or tab completion
+No command history, tab completion, or advanced job control
 
 🛠️ Build & run
 Requirements
 
 GCC or Clang
 
-Linux, macOS, or WSL environment (uses POSIX system calls)
+Linux, macOS, or WSL (uses POSIX system calls)
 
 Commands
 cd src
@@ -101,12 +100,12 @@ make        # builds minishell
 
 Note
 
-Windows builds with cl.exe will fail — use WSL or a Unix-like system.
+Windows builds using cl.exe will fail — use WSL or any Unix-like environment.
 
 🧭 Parsing roadmap (next steps)
-
 1️⃣ Improved tokenizer
-Split the input correctly while honoring quotes and operators.
+
+Split input correctly while honoring quotes and operators.
 
 Keep "quoted text" as one token.
 
@@ -115,24 +114,36 @@ Support escaped quotes \".
 Recognize operators (|, <, >, >>, 2>, &) as separate tokens.
 
 2️⃣ Basic redirection & pipe support
-After lexing:
 
-Implement > and < with dup2() before execvp().
+Implement > and < using dup2() before execvp().
 
 Add a single pipeline (cmd1 | cmd2) using one pipe and two child processes.
 
 3️⃣ Built-in polish
 
-Support cd with no args → $HOME
+Support cd with no args → $HOME.
 
-Add cd - for previous directory
+Add cd - for previous directory.
 
-Support exit N to return status code N
+Support exit N to return custom exit code.
 
-These incremental steps evolve the current shell into a functional multi-process interpreter while keeping the code lean and readable.
+These incremental steps evolve Minishell into a functional multi-process interpreter while keeping the design clean and minimal.
+
+✍️ Lessons learned
+
+Signal handling must use async-safe functions like write() inside handlers.
+
+Using waitpid prevents zombies from accumulating.
+
+Keeping parse() isolated simplifies testing and future token expansion.
+
+Defensive error messages make debugging user input and system calls trivial.
+
+Simple, well-scoped shells are perfect exercises for understanding process control.
 
 👤 Author
 
 Tymour Aidabole — Former U.S. Army Ranger • B.A. Computer Science, Columbia University
-LinkedIn
- • GitHub
+LinkedIn: https://www.linkedin.com/in/tymour-aidabole-1284b0159/
+
+GitHub: https://github.com/tymourknots
