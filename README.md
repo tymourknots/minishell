@@ -7,7 +7,7 @@
 
 ## 🎥 Demo Preview
 
-_Coming soon — short terminal walkthrough GIF showing command execution and Ctrl-C handling._
+![Minishell Demo](./minishell-demo.gif)](./minishell-demo.gif)
 
 ---
 
